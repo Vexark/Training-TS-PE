@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Training TS / PE</title>
+<meta name="theme-color" content="#1a1a19">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-192.png">
+<link rel="stylesheet" href="style.css">
+<script>try { const t = localStorage.getItem('training-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<header class="entete">
+  <a class="logo" href="#/"><span class="pastilles"><i style="background:var(--ts)"></i><i style="background:var(--pe)"></i></span>Training TS / PE</a>
+  <nav class="nav" id="nav"></nav>
+  <div class="droite"><span class="serie-entete" id="serie-entete" title="Jours d'affilée avec au moins une session"></span></div>
+</header>
+<main id="app"><p class="muet">Chargement de ta progression…</p></main>
+<div class="toasts" id="toasts"></div>
+<script type="module" src="js/app.js"></script>
+<script>
+  // hors connexion : le service worker garde une copie de toute l'app dans le téléphone
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
