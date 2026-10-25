@@ -430,5 +430,14 @@ table.tableau { display: block; overflow-x: auto; max-width: 100%; }
 .defile, .modele, .corrige { min-width: 0; }
 pre, code { white-space: pre-wrap; word-break: break-word; }
 
+/* Bandeau d'installation (app Android) */
+.installer {
+  position: fixed; z-index: 26; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px));
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 6px; padding: 14px;
+  background: var(--surface-2); border: 1px solid var(--bord-fort); border-radius: var(--rayon); box-shadow: var(--ombre);
+}
+.installer[hidden] { display: none; }
+
 .toasts { bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
