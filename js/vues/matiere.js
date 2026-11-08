@@ -69,7 +69,7 @@ export function vueAujourdhui(app, m) {
         <div class="hero">${st.indice}<small>%</small></div>
         <div style="margin:14px 0">${blocPalier(etat, m, st)}</div>
         <div class="chiffres-cles">
-          <div><span class="etiquette">Série</span><b>🔥 ${st.serie} j</b></div>
+          <div><span class="etiquette">Série</span><b>${st.serie} j</b></div>
           <div><span class="etiquette">Révisions dues</span><b>${st.revisionsDues}</b></div>
           <div><span class="etiquette">Précision 7 j</span><b>${st.precision7 === null ? '—' : pct0(st.precision7)}</b></div>
         </div>
@@ -93,7 +93,8 @@ export function vueEntrainement(app, m) {
   const nbErreurs = erreurs(etat, m).length;
   const nbPerso = (etat.mes_questions || []).filter((q) => q.m === m).length;
   const deals = dealsDisponibles();
-  const carte = (lien, icone, titre, texte, actif = true) => `<a class="carte" href="${actif ? lien : '#'}" style="text-decoration:none;${actif ? '' : 'opacity:.55;pointer-events:none'}"><div style="font-size:1.6rem">${icone}</div><h3 style="margin:6px 0 4px">${titre}</h3><div class="note">${texte}</div></a>`;
+  // l'icône est gardée dans les appels (lisibilité du code) mais plus affichée : le titre suffit
+  const carte = (lien, icone, titre, texte, actif = true) => `<a class="tuile" href="${actif ? lien : '#'}" style="text-decoration:none;${actif ? '' : 'opacity:.55;pointer-events:none'}"><b style="font-size:1.02rem">${titre}</b><span class="note">${texte}</span></a>`;
   app.className = `m-${m}`;
   app.innerHTML = `${enteteMatiere(m, 'entrainement')}
     <div class="grille quatre">
@@ -103,6 +104,13 @@ export function vueEntrainement(app, m) {
       ${carte(`#/${m}/deal`, '📰', 'Pitch d\'un deal', deals.length ? `Un deal de ta Veille de deal (${deals.length} disponibles), corrigé par ta propre analyse` : 'Aucun deal trouvé dans la Veille de deal', deals.length > 0)}
     </div>
     ${nbPerso ? `<p style="margin-top:12px"><a class="bouton" href="#/${m}/perso">📝 Mes questions (${nbPerso})</a></p>` : ''}
+    ${MATIERES[m].casPratiques.length ? `<div class="section">
+      <div class="titre-section"><h2>Cas pratiques : Lumen Industrie</h2><span class="note">Une même société fictive, cinq cas de plus en plus complets, comme un vrai test de cabinet</span></div>
+      <div class="grille trois">${MATIERES[m].casPratiques.map((c, i) => {
+        const fait = etat.cartes[c.id];
+        return `<a class="tuile" href="#/${m}/cas/${c.id}" style="text-decoration:none"><span class="libelle">Cas ${i + 1} · ${'★'.repeat(c.niveau)}</span><b style="display:block;margin-top:2px">${echapper(c.titre)}</b><span class="sous">${echapper(c.sous)}</span><span class="sous">${fait ? `fait ${fait.n} fois · dernier score ${Math.round((fait.s || 0) * 100)} %` : 'jamais fait'}</span></a>`;
+      }).join('')}</div>
+    </div>` : ''}
     <div class="carte section">
       <div class="titre-section"><h2>Par thème</h2><span class="note">Maîtrise = précision récente × couverture du thème × fraîcheur</span></div>
       ${MATIERES[m].themes.map((t) => {

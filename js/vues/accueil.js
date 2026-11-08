@@ -20,7 +20,7 @@ export function vueAccueil(app) {
   }));
   app.className = '';
   app.innerHTML = `
-    <div class="ligne"><h1 style="margin:0">Bonjour 👋</h1><span class="muet">${dateLisible(jour)}</span><span class="espace"></span><span class="pastille">🔥 Série : ${serieGlobale(etat)} jour${serieGlobale(etat) > 1 ? 's' : ''}</span></div>
+    <div class="ligne" style="align-items:baseline"><h1 style="margin:0">Bonjour</h1><span class="muet">${dateLisible(jour)}</span><span class="espace"></span><span class="muet num">Série : ${serieGlobale(etat)} jour${serieGlobale(etat) > 1 ? 's' : ''}</span></div>
     ${debutant ? `<div class="carte section"><h2>Bienvenue dans ton entraînement intensif</h2>
       <ol><li><strong>Fais ta première session TS et ta première session PE</strong> (30 min chacune) : l'application repère tout de suite tes points faibles.</li>
       <li>Renseigne tes <strong>dates d'entretien</strong> dans <a href="#/parametres">Paramètres</a> : compte à rebours et alertes ciblées.</li>
@@ -36,8 +36,8 @@ export function vueAccueil(app) {
         <div class="ligne" style="align-items:flex-end;margin-top:10px"><div><div class="etiquette">Indice de préparation</div><div class="hero">${st.indice}<small>%</small></div></div>
           ${n !== null && n >= 0 ? `<span class="espace"></span><div style="text-align:right"><div class="etiquette">Entretien</div><b style="font-size:1.4rem">${n === 0 ? 'aujourd\'hui' : `J−${n}`}</b></div>` : ''}</div>
         <div style="margin:12px 0">${blocPalier(etat, m, st)}</div>
-        <div class="chiffres-cles"><div><span class="etiquette">Série</span><b>🔥 ${st.serie} j</b></div><div><span class="etiquette">Révisions</span><b>${st.revisionsDues}</b></div><div><span class="etiquette">Exercices</span><b>${st.exercices}</b></div></div>
-        <div class="ligne"><a class="bouton principal" href="#/${m}">Session du jour</a><a class="bouton" href="#/${m}/simulation">Simulation</a><a class="bouton discret" href="#/${m}/sprint">⚡ Sprint</a></div>
+        <div class="chiffres-cles"><div><span class="etiquette">Série</span><b>${st.serie} j</b></div><div><span class="etiquette">Révisions</span><b>${st.revisionsDues}</b></div><div><span class="etiquette">Exercices</span><b>${st.exercices}</b></div></div>
+        <div class="ligne"><a class="bouton principal" href="#/${m}">Session du jour</a><a class="bouton" href="#/${m}/simulation">Simulation</a><a class="bouton discret" href="#/${m}/sprint">Sprint de calcul</a></div>
       </div>`;
     }).join('')}</div>
     <div class="section"><div class="titre-section"><h2>Alertes</h2></div>${listeAlertes(toutes.slice(0, 8), true)}</div>
@@ -46,7 +46,7 @@ export function vueAccueil(app) {
       <div class="carte"><h3>Conseils du jour</h3>${LISTE_MATIERES.map((m) => {
         const c = CONSEILS_DU_JOUR[m];
         return `<div class="m-${m}"><div class="conseil-recruteur"><span class="pastille accent">${MATIERES[m].court}</span> ${echapper(c[(ecartJours('2026-01-01', jour) + (m === 'pe' ? 7 : 0)) % c.length])}</div></div>`;
-      }).join('')}<p style="margin-top:12px"><a href="#/conseils">Tous les conseils (process de recrutement, méthodes, marché 2026) →</a></p></div>
+      }).join('')}<p style="margin-top:12px"><a href="#/conseils">Tous les conseils : process de recrutement, méthodes, marché 2026</a></p></div>
     </div>`;
   courbe(app.querySelector('[data-courbe]'), series);
   const table = app.querySelector('[data-table]');

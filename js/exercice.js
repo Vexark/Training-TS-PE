@@ -50,7 +50,7 @@ export function lireAVoixHaute(texte) {
 function brancherDictee(bouton, zoneTexte) {
   if (!Reconnaissance) { bouton.remove(); return () => {}; }
   let reco = null;
-  const arreter = () => { reco?.stop(); reco = null; bouton.classList.remove('actif'); bouton.textContent = '🎤 Dicter'; };
+  const arreter = () => { reco?.stop(); reco = null; bouton.classList.remove('actif'); bouton.textContent = 'Dicter'; };
   bouton.addEventListener('click', () => {
     if (reco) return arreter();
     reco = new Reconnaissance();
@@ -63,7 +63,7 @@ function brancherDictee(bouton, zoneTexte) {
     };
     reco.onerror = () => arreter();
     reco.onend = () => { if (reco) { try { reco.start(); } catch { arreter(); } } };
-    try { reco.start(); bouton.classList.add('actif'); bouton.textContent = '⏹ Arrêter la dictée'; } catch { arreter(); }
+    try { reco.start(); bouton.classList.add('actif'); bouton.textContent = 'Arrêter la dictée'; } catch { arreter(); }
   });
   return arreter;
 }
@@ -80,7 +80,7 @@ export function monterSaisie(zone, inst, options = {}) {
 
   const enonce = document.createElement('div');
   enonce.className = `enonce${inst.type === 'ouverte' && inst.genre === 'question' ? ' question' : ''}`;
-  enonce.innerHTML = `${inst.sansCalculatrice ? '<p><span class="pastille attention">✎ Sans calculatrice</span></p>' : ''}${inst.enonce}`;
+  enonce.innerHTML = `${inst.sansCalculatrice ? '<p><span class="pastille attention">Sans calculatrice</span></p>' : ''}${inst.enonce}`;
   zone.append(enonce);
   const actions = document.createElement('div');
   actions.className = 'ligne';
@@ -151,12 +151,12 @@ export function monterSaisie(zone, inst, options = {}) {
     actions.innerHTML = '<span class="note">Virgule ou point acceptés · <kbd>Entrée</kbd> pour passer au champ suivant</span>';
   } else if (inst.type === 'ouverte') {
     const outils = document.createElement('div');
-    outils.className = 'ligne';
-    outils.innerHTML = `<span class="chrono" data-chrono>${duree(inst.duree)}</span><span class="note">Réponds à voix haute comme face au recruteur. Écrire est facultatif (utile pour la correction IA).</span><span class="espace"></span>
-      <button type="button" class="bouton petit discret" data-lire>🔊 Lire la question</button><button type="button" class="bouton petit micro" data-micro>🎤 Dicter</button>`;
+    outils.className = 'outils-oral';
+    outils.innerHTML = `<span class="chrono" data-chrono title="Temps conseillé pour répondre">${duree(inst.duree)}</span><span class="consigne">Réponds à voix haute, comme face au recruteur.</span><span class="espace"></span>
+      <button type="button" class="bouton petit discret" data-lire>Lire la question</button><button type="button" class="bouton petit discret micro" data-micro>Dicter</button>`;
     const texte = document.createElement('textarea');
     texte.className = 'reponse';
-    texte.placeholder = 'Facultatif : écris ta réponse (1 phrase de conclusion, 3 points, 1 exemple chiffré)…';
+    texte.placeholder = 'Facultatif : écris ta réponse pour la comparer au corrigé (une conclusion, trois points, un exemple chiffré).';
     const compteur = document.createElement('div');
     compteur.className = 'note';
     texte.addEventListener('input', () => { const n = texte.value.trim().split(/\s+/).filter(Boolean).length; compteur.textContent = `${n} mot${n > 1 ? 's' : ''} ≈ ${duree(n / 2.5)} à l'oral`; });
@@ -180,7 +180,7 @@ export function monterSaisie(zone, inst, options = {}) {
     nettoyages.push(() => document.removeEventListener('keydown', clavier));
     valider.textContent = options.simulation ? 'Réponse suivante' : 'Voir la correction';
     valider.addEventListener('click', () => fin({ texte: texte.value }));
-    actions.innerHTML = '<span class="note"><kbd>Entrée</kbd> pour voir la correction (<kbd>Ctrl</kbd> + <kbd>Entrée</kbd> depuis la zone de texte)</span>';
+    actions.innerHTML = '<span class="note"><kbd>Entrée</kbd> ou <kbd>Ctrl</kbd> + <kbd>Entrée</kbd> depuis le texte</span>';
   }
   actions.prepend(valider);
   zone.append(actions);
@@ -190,7 +190,7 @@ export function monterSaisie(zone, inst, options = {}) {
 // Étude de cas : contexte toujours visible, étapes l'une après l'autre (corrigé de chaque étape sauf en simulation)
 function monterCas(zone, inst, options, fin) {
   const details = { etapes: [] };
-  zone.innerHTML = `<details class="contexte" open><summary>📁 Dossier : ${echapper(inst.titre)}</summary>${inst.contexte}</details>
+  zone.innerHTML = `<details class="contexte" open><summary>Dossier : ${echapper(inst.titre)}</summary>${inst.contexte}</details>
     <div class="etapes-cas">${inst.etapes.map((e, i) => `<span data-e="${i}">${echapper(e.titre || `Étape ${i + 1}`)}</span>`).join('')}</div><div data-etape></div>`;
   const zoneEtape = zone.querySelector('[data-etape]');
   const marquer = (i) => zone.querySelectorAll('.etapes-cas span').forEach((s, k) => { s.classList.toggle('courante', k === i); s.classList.toggle('faite', k < i); });
@@ -212,7 +212,7 @@ function monterCas(zone, inst, options, fin) {
           const b = document.createElement('button');
           b.className = 'bouton principal';
           b.style.marginTop = '12px';
-          b.textContent = i + 1 < inst.etapes.length ? 'Étape suivante →' : 'Terminer le cas';
+          b.textContent = i + 1 < inst.etapes.length ? 'Étape suivante' : 'Terminer le cas';
           b.addEventListener('click', suivant);
           zc.append(b);
           b.focus();
@@ -262,20 +262,22 @@ export function monterCorrige(zone, inst, d, options = {}) {
       boite.querySelector('[data-verdict]').innerHTML = `Score retenu : ${pastilleScore(sc)} <span class="note">(${source})</span>`;
       options.surChange?.(sc);
     };
+    // ordre de lecture : le corrigé d'abord ; la notation à la fin, collée en bas de l'écran pendant la lecture
     boite.innerHTML = `
-      ${interactif ? `<div class="auto-eval"><span class="etiquette">Après avoir lu la correction : comment t'en es-tu sorti ?</span>
-        <button type="button" class="bouton petit eval-bon" data-auto-val="1">✓ Je savais <kbd>1</kbd></button>
-        <button type="button" class="bouton petit eval-moyen" data-auto-val="0.5">≈ En partie <kbd>2</kbd></button>
-        <button type="button" class="bouton petit eval-rate" data-auto-val="0">✗ Je ne savais pas <kbd>3</kbd></button></div>` : ''}
-      <div class="verdict" data-verdict></div>
+      ${interactif ? '' : '<div class="verdict" data-verdict></div>'}
       ${aEcrit ? `<details><summary class="note">Ta réponse écrite</summary><div class="reponse-donnee">${echapper(d.texte)}</div></details>` : ''}
       <div class="modele">${inst.reponse}</div>${conseil}
-      <details class="points-attendus" ${aEcrit ? 'open' : ''}><summary>🎯 Les ${inst.points.length} points que le recruteur attend — coche ceux que tu as couverts (note plus fine)</summary>
+      <details class="points-attendus" ${aEcrit ? 'open' : ''}><summary>Les ${inst.points.length} points que le recruteur attend : coche ceux que tu as couverts</summary>
         <ul class="points-cles">${inst.points.map((p, i) => `<li><input type="checkbox" id="pt-${inst.cle}-${i}" data-i="${i}" ${d.coches[i] ? 'checked' : ''} ${interactif ? '' : 'disabled'}><label for="pt-${inst.cle}-${i}">${echapper(p.t)}</label></li>`).join('')}</ul>
         ${aEcrit ? '<p class="note">Cases pré-cochées d\'après les mots-clés de ta réponse écrite : vérifie-les.</p>' : ''}
         <div class="ligne" data-actions-fines></div></details>
       ${lexiqueHtml(`${texteDe(inst.enonce)} ${texteDe(inst.reponse)} ${texteDe(inst.conseil)} ${inst.points.map((p) => p.t).join(' ')}`)}
-      <div data-ia></div><div class="ligne" data-actions style="margin-top:12px"></div>`;
+      <div data-ia></div><div class="ligne" data-actions style="margin-top:12px"></div>
+      ${interactif ? `<div class="auto-eval"><span class="etiquette">Comment t'en es-tu sorti ?</span>
+        <button type="button" class="bouton petit eval-bon" data-auto-val="1">Je savais <kbd>1</kbd></button>
+        <button type="button" class="bouton petit eval-moyen" data-auto-val="0.5">En partie <kbd>2</kbd></button>
+        <button type="button" class="bouton petit eval-rate" data-auto-val="0">Je ne savais pas <kbd>3</kbd></button>
+        <div class="verdict-petit" data-verdict></div></div>` : ''}`;
     const zoneActions = boite.querySelector('[data-actions]');
     let fini = false;
     const finaliser = () => {
@@ -310,7 +312,7 @@ export function monterCorrige(zone, inst, d, options = {}) {
     if (iaDisponible && interactif && aEcrit) {
       const b = document.createElement('button');
       b.className = 'bouton';
-      b.textContent = '🤖 Corriger avec l\'IA';
+      b.textContent = 'Corriger avec l\'IA';
       b.title = 'Envoie la question, la réponse modèle et ta réponse à l\'IA (seulement quand tu touches le bouton)';
       b.addEventListener('click', () => corrigerIa(boite.querySelector('[data-ia]'), inst, d, b, majVerdict, options.matiere || inst.m));
       zoneActions.append(b);
@@ -331,7 +333,7 @@ export function monterCorrige(zone, inst, d, options = {}) {
 
 async function corrigerIa(zone, inst, d, bouton, majVerdict, matiere) {
   bouton.disabled = true;
-  bouton.textContent = '🤖 Correction en cours…';
+  bouton.textContent = 'Correction en cours…';
   zone.innerHTML = '<div class="ia-retour note">L\'IA lit ta réponse (quelques secondes)…</div>';
   try {
     const r = await appelApi('/api/ia/corriger', {
@@ -339,16 +341,16 @@ async function corrigerIa(zone, inst, d, bouton, majVerdict, matiere) {
       points: inst.points.map((p) => p.t), reponse_candidat: d.texte,
     });
     const liste = (titre, x) => (x?.length ? `<h4>${titre}</h4><ul>${x.map((t) => `<li>${echapper(t)}</li>`).join('')}</ul>` : '');
-    zone.innerHTML = `<div class="ia-retour"><div class="verdict">🤖 Note de l'IA : ${echapper(r.note)}/10 <span class="muet petit">(${echapper(r.modele || 'Gemini')})</span></div>
+    zone.innerHTML = `<div class="ia-retour"><div class="verdict">Note de l'IA : ${echapper(r.note)}/10 <span class="muet petit">(${echapper(r.modele || 'Gemini')})</span></div>
       ${liste('Ce que tu as bien couvert', r.points_couverts)}${liste('Ce qui manque', r.points_manquants)}${liste('Erreurs ou imprécisions', r.erreurs)}
       ${r.conseil ? `<p><strong>Conseil :</strong> ${echapper(r.conseil)}</p>` : ''}${r.reponse_ideale ? `<details><summary>Réponse idéale selon l'IA</summary><p style="white-space:pre-wrap">${echapper(r.reponse_ideale)}</p></details>` : ''}
       <button class="bouton petit" data-appliquer>Utiliser la note de l'IA (${echapper(r.note)}/10) comme score</button></div>`;
     zone.querySelector('[data-appliquer]').addEventListener('click', (ev) => { d.noteIa = Number(r.note); d.auto = null; ev.target.disabled = true; majVerdict(); });
-    bouton.textContent = '🤖 Corrigé par l\'IA';
+    bouton.textContent = 'Corrigé par l\'IA';
   } catch (err) {
     zone.innerHTML = `<div class="ia-retour"><span class="pastille critique">✗</span> ${echapper(err.message)}</div>`;
     bouton.disabled = false;
-    bouton.textContent = '🤖 Réessayer la correction IA';
+    bouton.textContent = 'Réessayer la correction IA';
   }
 }
 

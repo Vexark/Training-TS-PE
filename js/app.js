@@ -15,12 +15,27 @@ import { vueFiches, vueConseils, vuePitch, vueMesQuestions, vueParametres, appli
 const app = document.getElementById('app');
 
 function majEntete(route) {
-  const liens = [['#/', 'Accueil', ''], ['#/ts', 'TS', 'ts'], ['#/pe', 'PE', 'pe'], ['#/lexique', 'Lexique', ''], ['#/conseils', 'Conseils', ''], ['#/pitch', 'Pitch', ''], ['#/mes-questions', 'Mes Q.', ''], ['#/parametres', 'Réglages', '']];
-  const courant = `#/${route[0] || ''}`;
+  const liens = [['#/', 'Accueil', ''], ['#/ts', 'TS', 'ts'], ['#/pe', 'PE', 'pe'], ['#/lexique', 'Lexique', ''], ['#/plus', 'Plus', '']];
+  // les pages rangées sous « Plus » allument aussi cet onglet
+  const courant = ['conseils', 'pitch', 'mes-questions', 'parametres'].includes(route[0]) ? '#/plus' : `#/${route[0] || ''}`;
   document.getElementById('nav').innerHTML = liens.map(([href, nom, m]) =>
     `<a href="${href}" class="${courant === href ? 'actif' : ''}">${m ? `<span class="point" style="background:var(--${m})"></span>` : ''}${nom}</a>`).join('');
   const n = serieGlobale(lire());
-  document.getElementById('serie-entete').textContent = n ? `🔥 ${n} jour${n > 1 ? 's' : ''}` : '';
+  document.getElementById('serie-entete').textContent = n ? `Série : ${n} jour${n > 1 ? 's' : ''}` : '';
+  // mode concentration pendant une série : le menu s'efface, il ne reste que la question
+  document.body.classList.toggle('concentration', route[1] === 'run');
+}
+
+// Page « Plus » : ce qui ne mérite pas une place permanente dans le menu
+function vuePlus(app) {
+  app.className = '';
+  app.innerHTML = `<h1>Plus</h1>
+    <div class="liens-plus section">
+      <a href="#/pitch"><b>Mon pitch</b><span>Ta présentation et tes réponses de fit, à répéter à voix haute</span></a>
+      <a href="#/conseils"><b>Conseils</b><span>Le process de recrutement, les méthodes, le marché</span></a>
+      <a href="#/mes-questions"><b>Mes questions</b><span>Les questions que tu as ajoutées toi-même</span></a>
+      <a href="#/parametres"><b>Réglages</b><span>Dates d'entretien, thème, correction IA, sauvegarde et import depuis le PC</span></a>
+    </div>`;
 }
 
 // Lance une nouvelle série pour la matière (en remplaçant une série commencée, après confirmation)
@@ -62,7 +77,11 @@ function routeMatiere(m, route, parametres) {
     }
     case 'revisions': return demarrer(m, construireListe(m, 'revisions', revisionsDues(etat, m).slice(0, 20)));
     case 'erreurs': return demarrer(m, construireListe(m, 'erreurs', erreurs(etat, m).slice(0, 15)));
-    case 'cas': return demarrer(m, construireListe(m, 'cas', [MATIERES[m].cas.id]));
+    case 'cas': {
+      // #/ts/cas = étude de cas du jour ; #/ts/cas/<id> = un cas du recueil (Lumen Industrie)
+      const pratique = MATIERES[m].casPratiques.find((c) => c.id === route[2]);
+      return demarrer(m, construireListe(m, 'cas', [pratique ? pratique.id : MATIERES[m].cas.id]));
+    }
     case 'deal': {
       const deals = dealsDisponibles();
       if (!deals.length) { toast('Aucun deal analysé trouvé dans la Veille de deal.', true); return location.replace(`#/${m}/entrainement`); }
@@ -95,6 +114,7 @@ function afficher() {
     else if (route[0] === 'mes-questions') vueMesQuestions(app);
     else if (route[0] === 'lexique') vueLexique(app, parametres.get('q') || '');
     else if (route[0] === 'parametres') vueParametres(app);
+    else if (route[0] === 'plus') vuePlus(app);
     else vueAccueil(app);
   } catch (err) {
     console.error(err);

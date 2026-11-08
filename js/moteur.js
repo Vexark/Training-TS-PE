@@ -4,11 +4,13 @@ import { QUESTIONS_TS, THEMES_TS } from './contenu/ts.js';
 import { QUESTIONS_PE, THEMES_PE } from './contenu/pe.js';
 import { GENERATEURS_TS, CAS_TS } from './generateurs/ts.js';
 import { GENERATEURS_PE, CAS_PE } from './generateurs/pe.js';
+import { CAS_LUMEN } from './generateurs/cas_lumen.js';
 import { hasard, aujourdhui, ajouterJours, ecartJours, moyenne, normaliser, markdown, heureParis, meur, fois, echapper } from './outils.js';
 
+// cas : l'étude de cas tirée au hasard chaque jour ; casPratiques : le recueil de cas fixes (Lumen Industrie)
 export const MATIERES = {
-  ts: { id: 'ts', nom: 'Transaction Services', court: 'TS', themes: THEMES_TS, questions: QUESTIONS_TS, generateurs: GENERATEURS_TS, cas: CAS_TS },
-  pe: { id: 'pe', nom: 'Private Equity', court: 'PE', themes: THEMES_PE, questions: QUESTIONS_PE, generateurs: GENERATEURS_PE, cas: CAS_PE },
+  ts: { id: 'ts', nom: 'Transaction Services', court: 'TS', themes: THEMES_TS, questions: QUESTIONS_TS, generateurs: GENERATEURS_TS, cas: CAS_TS, casPratiques: CAS_LUMEN },
+  pe: { id: 'pe', nom: 'Private Equity', court: 'PE', themes: THEMES_PE, questions: QUESTIONS_PE, generateurs: GENERATEURS_PE, cas: CAS_PE, casPratiques: [] },
 };
 export const LISTE_MATIERES = ['ts', 'pe'];
 
@@ -37,6 +39,7 @@ function reconstruireIndex() {
     for (const q of mat.questions) index.set(q.id, { genre: 'question', m, theme: q.theme, niveau: q.niveau, q });
     for (const g of mat.generateurs) index.set(g.id, { genre: 'generateur', m, theme: g.theme, niveau: g.niveau, g });
     index.set(mat.cas.id, { genre: 'cas', m, theme: 'cas', niveau: 3, g: mat.cas });
+    for (const c of mat.casPratiques) index.set(c.id, { genre: 'cas', m, theme: 'cas', niveau: c.niveau, g: c });
   }
   for (const q of mesQuestions) index.set(q.id, { genre: 'question', m: q.m, theme: q.theme, niveau: q.niveau || 2, q, perso: true });
 }
@@ -81,17 +84,17 @@ function cibleCouverture(m, theme) {
 const NOMS_TYPES = { qcm: 'QCM', vf: 'Vrai ou faux', tri: 'Classement', calcul: 'Calcul', ouverte: 'Question d\'entretien', cas: 'Étude de cas' };
 export const nomType = (type) => NOMS_TYPES[type] || type;
 
-const bloc = (icone, titre, contenu, classe = '') => `<div class="bloc-corrige ${classe}"><div class="etiquette-bloc">${icone} ${titre}</div>${contenu}</div>`;
+const bloc = (titre, contenu, classe = '') => `<div class="bloc-corrige ${classe}"><div class="etiquette-bloc">${titre}</div>${contenu}</div>`;
 
 // Correction complète d'une question d'entretien : réponse courte, réponse complète, exemple, pièges, relances
 export function corrigeHtml(q) {
   if (q.reponse && !q.courte && !q.complete) return q.reponse; // ancien format (mes questions)
   return [
-    q.courte ? bloc('✅', 'Réponse courte — à dire en 30 secondes', q.courte, 'courte') : '',
-    q.complete ? bloc('📘', 'Réponse complète — pour développer', q.complete) : '',
-    q.exemple ? bloc('🔢', 'Exemple chiffré', q.exemple) : '',
-    q.pieges?.length ? bloc('⚠️', 'Pièges à éviter', `<ul>${q.pieges.map((x) => `<li>${x}</li>`).join('')}</ul>`, 'pieges') : '',
-    q.relances?.length ? bloc('🔁', 'Relances possibles du recruteur', `<dl class="relances">${q.relances.map(([qq, rr]) => `<dt>${qq}</dt><dd>${rr}</dd>`).join('')}</dl>`) : '',
+    q.courte ? bloc('À dire en 30 secondes', q.courte, 'courte') : '',
+    q.complete ? bloc('Pour développer', q.complete) : '',
+    q.exemple ? bloc('Exemple chiffré', q.exemple) : '',
+    q.pieges?.length ? bloc('Pièges à éviter', `<ul>${q.pieges.map((x) => `<li>${x}</li>`).join('')}</ul>`, 'pieges') : '',
+    q.relances?.length ? bloc('Relances du recruteur', `<dl class="relances">${q.relances.map(([qq, rr]) => `<dt>${qq}</dt><dd>${rr}</dd>`).join('')}</dl>`) : '',
   ].join('');
 }
 

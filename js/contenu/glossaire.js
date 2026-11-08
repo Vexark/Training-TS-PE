@@ -105,6 +105,7 @@ export const GLOSSAIRE = [
 
   // ---------------------------------------------------------------- Net Working Capital
   g('Net Working Capital', 'besoin en fonds de roulement', 'NWC : créances clients + stocks − dettes fournisseurs (± autres créances et dettes d\'exploitation). Le cash immobilisé par le cycle d\'exploitation.', { v: ['NWC', 'working capital', 'trade working capital', 'BFR'], csv: ['NWC', 'BFR'] }),
+  g('Benchmark', 'référentiel de comparaison', 'Repères chiffrés tirés d\'un groupe de sociétés comparables (médiane, quartiles d\'un secteur). En DD, il sert à situer une cible et à poser des questions, jamais à fixer le prix.', { v: ['benchmarks', 'benchmarking'] }),
   g('Normalised NWC', 'BFR normatif', 'Niveau « normal » de NWC dont l\'activité a besoin, en général la moyenne mensuelle LTM retraitée des éléments non opérationnels.', { v: ['normalized NWC', 'normalised working capital', 'BFR normatif'] }),
   g('NWC peg', 'BFR cible', 'Niveau de NWC de référence fixé dans le SPA : si le NWC livré au closing est inférieur, le prix baisse euro pour euro (et inversement).', { v: ['peg', 'NWC target', 'target working capital'] }),
   g('Seasonality', 'saisonnalité', 'Variation récurrente de l\'activité et du NWC au cours de l\'année (pic de stocks avant l\'été, encaissements de rentrée…).', { v: ['saisonnalité', 'seasonal'] }),

@@ -36,7 +36,7 @@ export function enteteMatiere(m, actif) {
 }
 
 export function listeAlertes(alertes, avecMatiere = false) {
-  if (!alertes.length) return '<p class="muet">Aucune alerte : tout est à jour. 👌</p>';
+  if (!alertes.length) return '<p class="muet">Aucune alerte : tout est à jour.</p>';
   return `<div class="alertes">${alertes.map((a) => `<div class="alerte ${a.niveau} ${a.m ? `m-${a.m}` : ''}"><span class="icone">${a.icone}</span>
     ${avecMatiere && a.m ? `<span class="m">${MATIERES[a.m].court}</span>` : ''}<span class="texte">${echapper(a.texte)}</span>
     ${a.action ? `<a class="bouton petit" href="${a.action.route}">${echapper(a.action.libelle)}</a>` : ''}</div>`).join('')}</div>`;

@@ -39,21 +39,27 @@ export function afficherRun(app, m) {
     const inst = instancier(item.cle, item.graine);
     if (!inst) { run.pos += 1; sauver(); return exerciceSuivant(); } // exercice supprimé (ex. question perso)
     const debut = Date.now();
+    // mode concentration : une ligne d'en-tête, une ligne de contexte discrète, puis la question seule
+    // sans doublon : un cas n'a que son rôle ; le niveau n'est affiché que si le rôle ne le dit pas déjà
+    const roleDitNiveau = /facile|moyen|difficile/i.test(item.role || '');
+    const meta = (inst.type === 'cas' ? [`<span class="role">${echapper(item.role || 'Étude de cas')}</span>`] : [
+      item.role ? `<span class="role">${echapper(item.role)}</span>` : '',
+      `<span>${echapper(nomTheme(m, inst.theme))}</span>`,
+      `<span>${echapper(libelleType(inst))}</span>`,
+      inst.genre !== 'deal' && !roleDitNiveau ? `<span class="niveau-${inst.niveau || 1}">${echapper(libelleNiveau(inst))}</span>` : '',
+      item.rev ? '<span title="Revient grâce à la révision espacée">Révision</span>' : '',
+      inst.perso ? '<span>Ma question</span>' : '',
+    ]).filter(Boolean).join('');
+    cadre.className = 'run';
     cadre.innerHTML = `
-      <div class="ligne"><a class="bouton discret petit" href="#/${m}">← ${MATIERES[m].court}</a><h2 style="margin:0">${echapper(titreRun(run))}</h2><span class="espace"></span>
+      <div class="run-tete"><a class="bouton discret petit" href="#/${m}" title="La série reste en cours : tu la reprends quand tu veux">Pause</a>
+        <span class="titre">${echapper(titreRun(run))}</span><span class="compteur">${run.pos + 1} / ${run.items.length}</span><span class="espace"></span>
         ${simulation ? '<span class="chrono" data-chrono-global title="Durée de la simulation">0 s</span>' : ''}
-        <span class="muet">${run.pos + 1} / ${run.items.length}</span><button class="bouton petit discret" data-abandon>Arrêter</button></div>
+        <span class="chrono${inst.type === 'ouverte' ? ' cache' : ''}" data-chrono title="Temps passé">0 s</span>
+        <button class="bouton petit discret" data-abandon>Arrêter</button></div>
       <div class="progression-run"><i style="width:${(run.pos / run.items.length) * 100}%"></i></div>
-      <div class="carte exercice">
-        <div class="exercice-tete">
-          ${item.role ? `<span class="pastille accent">${echapper(item.role)}</span>` : ''}
-          <span class="pastille">${echapper(libelleType(inst))}</span>
-          <span class="pastille">${echapper(inst.type === 'cas' ? 'Étude de cas' : nomTheme(m, inst.theme))}</span>
-          ${inst.type !== 'cas' && inst.genre !== 'deal' ? `<span class="pastille niveau-${inst.niveau || 1}" title="Difficulté">${echapper(libelleNiveau(inst))}</span>` : ''}
-          ${item.rev ? '<span class="pastille" title="Revient grâce à la révision espacée">🔁 Révision</span>' : ''}
-          ${inst.perso ? '<span class="pastille">Ma question</span>' : ''}
-          <span class="espace"></span><span class="chrono" data-chrono title="Temps passé">0 s</span>
-        </div>
+      <div class="exercice">
+        <div class="meta-exo">${meta}</div>
         ${inst.titre && inst.type !== 'cas' && inst.genre !== 'question' ? `<h3>${echapper(inst.titre)}</h3>` : ''}
         <div data-saisie></div><div data-corrige></div>
       </div>`;
@@ -133,6 +139,8 @@ export function afficherRun(app, m) {
     const conseils = CONSEILS_DU_JOUR[m];
     const conseil = conseils[Math.floor(Date.now() / 86400000) % conseils.length];
     const rates = res.filter((r) => r.s < 0.6).length;
+    cadre.className = '';
+    document.body.classList.remove('concentration');
     cadre.innerHTML = `
       <div class="ligne"><a class="bouton discret petit" href="#/${m}">← ${MATIERES[m].court}</a><h2 style="margin:0">Bilan : ${echapper(titreRun(run))}</h2></div>
       <div class="grille trois section">
@@ -162,6 +170,8 @@ export function afficherRun(app, m) {
   const rapportSimulation = () => {
     const res = run.resultats;
     const dureeTotale = (Date.now() - new Date(run.debut)) / 1000;
+    cadre.className = '';
+    document.body.classList.remove('concentration');
     cadre.innerHTML = `
       <div class="ligne"><h2 style="margin:0">Fin de la simulation — l'heure du débrief</h2></div>
       <p class="note">Comme après un vrai entretien : relis chaque réponse, compare au corrigé et coche honnêtement les points couverts. Le score se met à jour en direct.</p>
