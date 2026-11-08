@@ -11,7 +11,6 @@ import prix from './ts/prix.js';
 import ifrs from './ts/ifrs.js';
 import valo from './ts/valo.js';
 import fit from './ts/fit.js';
-import outil from './ts/outil.js';
 import { avecComplements } from './complements.js';
 
 export const THEMES_TS = [
@@ -24,9 +23,8 @@ export const THEMES_TS = [
   { id: 'ifrs', nom: 'IFRS et sujets d\'actualité', poids: 0.8, court: 'IFRS' },
   { id: 'valo', nom: 'Valuation et EV-to-Equity bridge', poids: 0.9, court: 'Valuation' },
   { id: 'fit', nom: 'Fit et motivation', poids: 1.2, court: 'Fit' },
-  { id: 'outil', nom: 'Mon outil : Working Capital Normalizer et benchmark BFR', poids: 1.2, court: 'Mon outil' },
   { id: 'cas', nom: 'Études de cas', poids: 1.3, court: 'Cas' },
 ];
 
 // Les compléments (réponse complète, exemple, pièges, relances) sont fusionnés au chargement
-export const QUESTIONS_TS = avecComplements([...metier, ...comptes, ...qoe, ...bfr, ...dette, ...prix, ...ifrs, ...valo, ...fit, ...outil]);
+export const QUESTIONS_TS = avecComplements([...metier, ...comptes, ...qoe, ...bfr, ...dette, ...prix, ...ifrs, ...valo, ...fit]);

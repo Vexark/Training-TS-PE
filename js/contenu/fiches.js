@@ -100,22 +100,6 @@ export const FICHES = {
       'Toujours 3 questions à poser à la fin.',
     ]) + phrase('« Ce qui m\'attire en TS, c\'est que mon analyse change concrètement un prix et une décision. »'),
 
-    outil: bloc('Le pitch en quatre phrases', [
-      '<strong>Problème</strong> : en DD, reconstruire le NWC mensuel prend du temps, et les repères sectoriels fiables manquent.',
-      '<strong>Dossier</strong> : FEC → balances mensuelles → NWC mensuel → retraitements <strong>proposés</strong> et tracés → normalised NWC (moyenne LTM) et adjusted net debt → databook.',
-      '<strong>Benchmark</strong> : comptes déposés lus via l\'INPI (RNE), NWC recalculé au sens TS, quartiles par secteur à partir de 30 sociétés, rang de la cible calculé en local.',
-      '<strong>Limite assumée</strong> : l\'outil propose, l\'analyste décide ; le benchmark pose des questions, il ne fixe pas un prix.',
-    ]) + bloc('Les chiffres à connaître', [
-      'DSO = (créances clients brutes + effets escomptés non échus) / CA TTC × 365 ; DPO = fournisseurs / (achats + charges externes) TTC × 365.',
-      'Contrôles : 875 tests, 61 erreurs introduites exprès toutes détectées, plus de 99 % de concordance avec la DGE, 36 montants sur 36 exacts contre les PDF déposés.',
-      'Transport 2024 : NWC négatif pour 54 % des sociétés, mais 23 % seulement sur le trade working capital.',
-      'Fiabilité A (≥ 100 sociétés, bonne couverture), B, C (< 30 sociétés ou millésime provisoire).',
-    ]) + bloc('Les limites à citer toi-même', [
-      'Délais apparents : photo à la clôture, pas de saisonnalité.',
-      'Comptes sociaux : intragroupe non isolable ; filiales surreprésentées (biais de confidentialité).',
-      'Pas encore relu par un professionnel TS ; tranche 2-5 M€ de CA incomplète ; écart d\'environ 3 jours avec les quartiles DGE non expliqué.',
-      'Un peg (moyenne mensuelle) ne se compare jamais à une médiane de secteur (photo de clôture).',
-    ]) + phrase('« Mon outil fait gagner du temps et montre où regarder ; le jugement et la négociation restent à l\'analyste. »'),
 
     cas: bloc('Réussir un cas pratique TS (1h30 à 2h, souvent restitué à l\'oral)', [
       'Lire tout le cas d\'abord, repérer la matérialité et les questions posées.',

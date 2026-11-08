@@ -1,6 +1,6 @@
 // Cinq cas pratiques TS de difficulté croissante sur une même société fictive, Lumen Industrie SAS
 // (fabricant d'éclairage professionnel, environ 8 M€ de CA, pic d'activité au 4e trimestre).
-// C'est la société d'exemple du Working Capital Normalizer : ses écritures contiennent les pièges classiques d'une DD
+// Ses écritures contiennent volontairement les pièges classiques d'une DD
 // (fournisseurs étirés en décembre, fournisseur d'immobilisations, créance de cession, CIR, litige, bonus courus,
 // retenue du factor, compte d'attente). Données FIXES (comme un recueil de cas) : tous les chiffres des corrigés sont
 // CALCULÉS ici à partir des mêmes données que l'énoncé, pour qu'énoncé et corrigé ne puissent jamais diverger.
@@ -209,7 +209,7 @@ function cas3() {
 }
 
 // ---------------------------------------------------------------------------------------------------
-// Cas 4 — Lumen face à son secteur (difficile) : chiffres du benchmark BFR, cohorte industrie manufacturière 2024
+// Cas 4 — Lumen face à son secteur (difficile) : repères sectoriels tirés des comptes publiés 2024 (industrie manufacturière)
 // ---------------------------------------------------------------------------------------------------
 const SECTEUR = {
   n: 6530,
@@ -229,7 +229,7 @@ function cas4() {
   return {
     type: 'cas', titre: 'Cas Lumen 4 : Lumen face à son secteur', duree: 25 * 60,
     contexte: `${PRESENTATION}
-      <p>Ton benchmark BFR situe Lumen dans la cohorte <strong>industrie manufacturière 2024</strong> (${nombre(SECTEUR.n, 0)} sociétés, comptes publiés, fiabilité A). Délais apparents, photo à la clôture.</p>
+      <p>Un benchmark sectoriel tiré des comptes publiés situe Lumen dans la cohorte <strong>industrie manufacturière 2024</strong> (${nombre(SECTEUR.n, 0)} sociétés, comptes publiés, fiabilité A). Délais apparents, photo à la clôture.</p>
       ${tableau(['En jours', 'Lumen 31/12/2025', 'Q1', 'Médiane', 'Q3', 'P90'], [
         ligne('DSO (TTC)', dso, SECTEUR.dso), ligne('DPO (TTC)', dpo, SECTEUR.dpo), ligne('Stocks en jours de CA', dio, SECTEUR.stocks),
       ])}
@@ -281,7 +281,7 @@ function cas4() {
         ],
         conseil: 'Le partner veut la position et la conséquence prix en premier ; la méthode ensuite, seulement s\'il la demande.' },
     ],
-    conseil: 'Chiffres du secteur tirés de ton benchmark (comptes publiés 2024) : en entretien, cite-les comme des repères, jamais comme des normes.',
+    conseil: 'Chiffres du secteur tirés de comptes publiés 2024 : en entretien, cite-les comme des repères, jamais comme des normes.',
   };
 }
 
@@ -383,6 +383,6 @@ export const CAS_LUMEN = [
   { id: 'cas-ts-lumen-1', m: 'ts', theme: 'cas', niveau: 1, titre: 'Du bilan au trade working capital', sous: 'TWC, DSO, DPO, un DPO suspect · 15 min', creer: cas1 },
   { id: 'cas-ts-lumen-2', m: 'ts', theme: 'cas', niveau: 2, titre: 'NWC mensuel et peg', sous: 'Moyenne LTM, report de décembre, peg saisonnier · 20 min', creer: cas2 },
   { id: 'cas-ts-lumen-3', m: 'ts', theme: 'cas', niveau: 2, titre: 'Les retraitements du NWC', sous: 'NWC, debt-like, cash-like, le débat des bonus · 25 min', creer: cas3 },
-  { id: 'cas-ts-lumen-4', m: 'ts', theme: 'cas', niveau: 3, titre: 'Lumen face à son secteur', sous: 'Ton benchmark : quartiles, cash libéré, signal de défaut · 25 min', creer: cas4 },
+  { id: 'cas-ts-lumen-4', m: 'ts', theme: 'cas', niveau: 3, titre: 'Lumen face à son secteur', sous: 'Benchmark sectoriel : quartiles, cash libéré, signal de défaut · 25 min', creer: cas4 },
   { id: 'cas-ts-lumen-5', m: 'ts', theme: 'cas', niveau: 3, titre: 'Due diligence complète, du FEC au prix', sous: 'EBITDA, net debt, affacturage, peg, prix · 35 min', creer: cas5 },
 ];
